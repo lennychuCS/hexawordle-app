@@ -1,6 +1,9 @@
 <script>
-	import { data } from './data.js'
-	let correctWord = 'SHAPED';
+	import { data } from './data.js';
+	let fullWordArray = data.split(',');
+	let randomNum = Math.floor(Math.random() * fullWordArray.length);
+	let correctWord = fullWordArray[randomNum].toUpperCase();
+	//console.log(correctWord);
 	let currentGuess = 0;
 	let currentLetter = 0;
 	let guesses = [];
@@ -61,10 +64,7 @@
 	<p>Your guesses lie below.</p>
 </header>
 
-<main>
-	<!-- <p>{guesses[0].text.join(" ")}</p> -->
-	
-</main>
+
 
 <svg id='guessBoxes' width='250px' viewBox='0 0 130 160'>
 	{#each [0, 1, 2, 3, 4, 5] as x}
@@ -80,6 +80,13 @@
 		{/each}
 	{/each}
 </svg>
+
+<main>
+	{#if currentGuess==7}
+		<p>You unfortunatly did not guess the word. It was {correctWord}. Thank you for playing!</p>
+	{/if}
+</main>
+
 
 <style>
 	header {
