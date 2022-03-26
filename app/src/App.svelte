@@ -1,11 +1,13 @@
 <script>
-	import { data } from './data.js';
-	let fullWordArray = data.split(',');
-	let randomNum = Math.floor(Math.random() * fullWordArray.length);
-	let correctWord = fullWordArray[randomNum].toUpperCase();
+	import { allWords } from './allWords.js';
+	import { commonWords } from './commonWords.js';
+	let commonWordsArray = commonWords.split(',');
+	let randomNum = Math.floor(Math.random() * commonWordsArray.length);
+	let correctWord = commonWordsArray[randomNum].toUpperCase();
 	let currentGuess = 0;
 	let currentLetter = 0;
 	let guesses = [];
+	let gameWon = false;
 
 	// Frontend bullshit
 	let boxThickness = 1;
@@ -23,49 +25,57 @@ console.log(correctWord);
 
 	document.addEventListener('keydown', function(event) {
     	let key = event.key.toUpperCase(); // "a", "1", "Shift", etc.
-
-		if(key === 'ENTER'){
-			if(currentLetter==6){
-				if(checkValidWord()){
-					checkLetters();
-					currentGuess += 1;
-					currentLetter = 0;
+		if(!gameWon){
+			if(key === 'ENTER'){
+				if(currentLetter==6){
+					if(checkValidWord()){
+						checkLetters();
+						currentGuess += 1;
+						currentLetter = 0;
+					} else {
+						alert('Not a Valid Word!');
+					}
 				} else {
-					alert('Not a Valid Word!');
+					alert('Your word is not long enough!');
 				}
-			} else {
-				alert('Your word is not long enough!');
+			} else if(currentLetter != 0 && key == 'BACKSPACE') {
+				guesses[currentGuess].text[currentLetter-1] = '';
+				currentLetter -= 1;
+			} else if(key.length == 1 && currentLetter<6 && key.toUpperCase() != key.toLowerCase()){
+				guesses[currentGuess].text[currentLetter] = key;
+				currentLetter += 1;
 			}
-		} else if(currentLetter != 0 && key == 'BACKSPACE') {
-			guesses[currentGuess].text[currentLetter-1] = '';
-			currentLetter -= 1;
-		} else if(key.length == 1 && currentLetter<6 && key.toUpperCase() != key.toLowerCase()){
-			guesses[currentGuess].text[currentLetter] = key;
-			currentLetter += 1;
 		}
 		
 		function checkValidWord(){
 			let word = guesses[currentGuess].text.join('').toLowerCase();
 			
-			return data.includes(word);
+			return allWords.includes(word);
 		}
 
 		function checkLetters(){
-			let usedChars = [];
+			let lettersLeft = correctWord.split('');
 			for(let i = 0; i < 6; i++) {
-				if(guesses[currentGuess].text[i] == correctWord.charAt(i)) {
+				if(guesses[currentGuess].text[i] == lettersLeft[i]) {
 					guesses[currentGuess].vsCorrect[i] = 'F';
-					usedChars.push(correctWord.charAt(i));
+					lettersLeft[i] = '';
 				}
 			}
 			for(let i = 0; i<6; i++){
-console.log(usedChars)
-				if (correctWord.includes(guesses[currentGuess].text[i]) && !usedChars.includes(guesses[currentGuess].text[i])){
-console.log('yes')
+				if (lettersLeft[i]!='' && correctWord.includes(guesses[currentGuess].text[i]) && lettersLeft.includes(guesses[currentGuess].text[i])){
 					guesses[currentGuess].vsCorrect[i] = 'P';
-					usedChars.push(guesses[currentGuess].text[i]);
+					lettersLeft[lettersLeft.indexOf(guesses[currentGuess].text[i])] = '';
 				}
 			}
+
+			for(let i = 0; i<6; i++){
+				if (guesses[currentGuess].vsCorrect[i] != 'F'){
+					gameWon = false;
+					break;
+				}
+				gameWon = true;
+			}
+
 		}
 	});
 
@@ -105,8 +115,10 @@ console.log('yes')
 </svg>
 
 <main>
-	{#if currentGuess==7}
+	{#if gameWon == false && currentGuess == 7}
 		<p>You unfortunately did not guess the word. It was {correctWord}. Thank you for playing!</p>
+	{:else if gameWon == true}
+		<p>Congradulations! You got it in {currentGuess} guesses!</p>
 	{/if}
 </main>
 
