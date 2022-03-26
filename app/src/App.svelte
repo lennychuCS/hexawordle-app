@@ -3,10 +3,19 @@
 	let fullWordArray = data.split(',');
 	let randomNum = Math.floor(Math.random() * fullWordArray.length);
 	let correctWord = fullWordArray[randomNum].toUpperCase();
-	//console.log(correctWord);
 	let currentGuess = 0;
 	let currentLetter = 0;
 	let guesses = [];
+
+	// Frontend bullshit
+	let boxThickness = 1;
+	let boxLength = 20;
+	let padding = 2;
+	let lettersGrid = {
+		x: boxThickness*12 + boxLength*6 + padding*5,
+		y: boxThickness*14 + boxLength*7 + padding*6
+	};
+console.log(correctWord);
 
 	for(let i = 0; i < 7; i++){
 		guesses.push({ id: i, text: ['','','','','',''], vsCorrect:['','','','','',''] })
@@ -38,23 +47,35 @@
 		function checkValidWord(){
 			let word = guesses[currentGuess].text.join('').toLowerCase();
 			
-			if(data.includes(word)){
-				return true;
-			}
-			return false;
+			return data.includes(word);
 		}
 
 		function checkLetters(){
-			for(let i = 0; i<6; i++){
-				if(guesses[currentGuess].text[i]==correctWord.charAt(i)){
+			let usedChars = [];
+			for(let i = 0; i < 6; i++) {
+				if(guesses[currentGuess].text[i] == correctWord.charAt(i)) {
 					guesses[currentGuess].vsCorrect[i] = 'F';
-				} else if (correctWord.includes(guesses[currentGuess].text[i])){
+					usedChars.push(correctWord.charAt(i));
+				}
+			}
+			for(let i = 0; i<6; i++){
+console.log(usedChars)
+				if (correctWord.includes(guesses[currentGuess].text[i]) && !usedChars.includes(guesses[currentGuess].text[i])){
+console.log('yes')
 					guesses[currentGuess].vsCorrect[i] = 'P';
+					usedChars.push(guesses[currentGuess].text[i]);
 				}
 			}
 		}
-
 	});
+
+	function colorOf(cond){
+		switch(cond) {
+			case 'F': return 'letterBoxFull';
+			case 'P': return 'letterBoxPartial';
+			default: return 'letterBoxWrong'
+		}
+	}
 
 </script>
 
@@ -66,24 +87,26 @@
 
 
 
-<svg id='guessBoxes' width='250px' viewBox='0 0 130 160'>
-	{#each [0, 1, 2, 3, 4, 5] as x}
-		{#each [0, 1, 2, 3, 4, 5, 6] as y}
-			{#if guesses[y].vsCorrect[x] == 'F'}
-				<rect width="20" height="20" x={x*22} y={y*22} class='letterBoxFull'/>
-			{:else if guesses[y].vsCorrect[x] == 'P'}
-				<rect width="20" height="20" x={x*22} y={y*22} class='letterBoxPartial'/>
-			{:else}
-				<rect width="20" height="20" x={x*22} y={y*22} class='letterBoxWrong'/>
-			{/if}
-			<text x={x*22+5} y={y*22+15}>{guesses[y].text[x]}</text>
+<svg id='guessBoxes' width='250px' viewBox='0 0 {lettersGrid.x} {lettersGrid.y}'>
+	{#each [0, 1, 2, 3, 4, 5] as col}
+		{#each [0, 1, 2, 3, 4, 5, 6] as row}
+			{#each [padding + col*22] as x}
+				{#each [padding + row*22] as y}
+					{#if row >= currentGuess}
+						<rect width="20" height="20" {x} {y} class='letterBoxUnanswered'/>
+					{:else}
+						<rect width="20" height="20" {x} {y} class={colorOf(guesses[row].vsCorrect[col])}/>
+					{/if}
+					<text x={x+boxLength/2} y={y+boxLength/2+2} dominant-baseline="middle" text-anchor="middle">{guesses[row].text[col]}</text>
+				{/each}
+			{/each}
 		{/each}
 	{/each}
 </svg>
 
 <main>
 	{#if currentGuess==7}
-		<p>You unfortunatly did not guess the word. It was {correctWord}. Thank you for playing!</p>
+		<p>You unfortunately did not guess the word. It was {correctWord}. Thank you for playing!</p>
 	{/if}
 </main>
 
@@ -123,9 +146,15 @@
 		stroke-width: 1px;
 	}
 
+	.letterBoxUnanswered {
+		stroke: #000000;
+		fill: #ccc;
+		stroke-width: 1px;
+	}
+
 	.letterBoxWrong {
 		stroke: #000000;
-		fill: #D8D8D8;
+		fill: #999;
 		stroke-width: 1px;
 	}
 
