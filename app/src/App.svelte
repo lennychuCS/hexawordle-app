@@ -1,14 +1,17 @@
 <script>
 	//Imports
-	import { allWords } from './allWords.js'; //All words that are valid guesses
-	import { commonWords } from './commonWords.js'; //Pool of words to pull words from as goal words.
 	import PseudoKeyboard from './PseudoKeyboard.svelte'; //Keyboard at bottom of screen
 	import { guessData } from './stores.js'; //Stored variable so other components can see.
+	import * as words from './words.json'; //Contains guessable words and word pool for hexawordle
 
 	//Set up variables
-	let commonWordsArray = commonWords.split(',');
+	let commonWordsArray = words.commonWords.split(',');
 	let randomNum = Math.floor(Math.random() * commonWordsArray.length);
 	let correctWord = commonWordsArray[randomNum].toUpperCase();
+	if(words.testWord != ""){
+		correctWord = words.testWord.toUpperCase();
+	}
+
 	let currentGuess = 0;
 	let currentLetter = 0;
 	let guesses = [];
@@ -60,11 +63,12 @@
 		function checkValidWord(){
 			let word = guesses[currentGuess].text.join('').toLowerCase();
 			
-			return allWords.includes(word);
+			return (words.allWords.includes(word) || words.commonWords.includes(word)); //Ensures word is guessable
 		}
 
 		function checkLetters(){
 			let lettersLeft = correctWord.split('');
+
 			for(let i = 0; i < 6; i++) {
 				if(guesses[currentGuess].text[i] == lettersLeft[i]) {
 					guesses[currentGuess].vsCorrect[i] = 'F';
@@ -73,7 +77,7 @@
 			}
 
 			for(let i = 0; i<6; i++){
-				if (correctWord.includes(guesses[currentGuess].text[i]) && lettersLeft.includes(guesses[currentGuess].text[i])){
+				if (guesses[currentGuess].vsCorrect[i] == '' && correctWord.includes(guesses[currentGuess].text[i]) && lettersLeft.includes(guesses[currentGuess].text[i])){
 					guesses[currentGuess].vsCorrect[i] = 'P';
 					lettersLeft[lettersLeft.indexOf(guesses[currentGuess].text[i])] = '';
 				}
