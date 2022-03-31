@@ -1,7 +1,8 @@
 <script>
-	import { guessData } from './stores.js';
+	import { guessData, correctWord, currentLetter, currentGuess } from './stores.js';
+	import * as kps from './keyProcesser.js';
 
-	export let allLetters= 'QWERTYUIOPASDFGHJKLZXCVBNM'; //For Keyboard
+	export let allLetters = 'QWERTYUIOPASDFGHJKLZXCVBNM'; //For Keyboard
 
 	//Unanswered, Wrong, Partial, Full
 	let stateKey = {
@@ -10,6 +11,10 @@
 		'P' : 2,
 		'F' : 3
 	};
+
+	function onButtonClick(text){
+		kps.processKey(text, $guessData, $correctWord, $currentLetter, $currentGuess, allLetters);
+	}
 
 	function colorOf(letter){
 		let bestState = "U";
@@ -25,60 +30,92 @@
 				}
 			}
 		}
-		//console.log(bestState);
+		//console.log("Letter ", letter, " was ", bestState);
 		
 		switch(bestState) {
-			case 'U': return 'letterBoxUnanswered';
-			case 'F': return 'letterBoxFull';
-			case 'P': return 'letterBoxPartial';
-			default: return 'letterBoxWrong';
+			case 'U': return 'buttonUnanswered';
+			case 'F': return 'buttonFull';
+			case 'P': return 'buttonPartial';
+			default: return 'buttonWrong';
 		}
 	}
 </script>
 
-<main>
-	<svg id='PsedoKeyboard' width="350px" viewbox='0 0 220 66'>
-		{#each Array(26) as _, i}
-			{#if i < 10}
-				<rect width="20" height="20" x={i*22} y='0' class={colorOf(allLetters[i])}/>
-				<text x={i*22 + 10} y={12} dominant-baseline="middle" text-anchor="middle">{allLetters[i]}</text>
-			{:else if i < 19}
-				<rect width="20" height="20" x={(i-10)*22+11} y='22' class={colorOf(allLetters[i])}/>
-				<text x={(i-10)*22 + 10 + 11} y={34} dominant-baseline="middle" text-anchor="middle">{allLetters[i]}</text>
-			{:else}
-				<rect width="20" height="20" x={(i-19)*22+33} y='44' class={colorOf(allLetters[i])}/>
-				<text x={(i-19)*22 + 10 + 33} y={56} dominant-baseline="middle" text-anchor="middle">{allLetters[i]}</text>
-			{/if}
-		{/each}
-	</svg>
-</main>
+<div id="PseudoKeyboard" class="container">
+	{#each Array(26) as _, i}
+		{#if i < 10}
+			<button id={allLetters[i]}
+					class='button {colorOf(allLetters[i])}' 
+					on:click={(_) => onButtonClick(allLetters[i])}
+					style='grid-row-start: 1; grid-row-end: 2;'>
+					{allLetters[i]}</button>
+		{:else if i < 19}
+			<button id={allLetters[i]}
+					class='button {colorOf(allLetters[i])}'
+					on:click={(_) => onButtonClick(allLetters[i])}
+					style='grid-row-start: 2; grid-row-end: 3;'>
+					{allLetters[i]}</button>
+		{:else}
+			<button id={allLetters[i]}
+					class='button {colorOf(allLetters[i])}'
+					on:click={(_) => onButtonClick(allLetters[i])}
+					style='grid-row-start: 3; grid-row-end: 4;'>
+					{allLetters[i]}</button>
+		{/if}
+	{/each}
+	
+	<button id='BACKSPACE'
+			class='button buttonUnanswered'
+			on:click={(_) => onButtonClick('BACKSPACE')}
+			style='grid-column-start: 10; grid-column-end: 11; grid-row-start: 2; grid-row-end: 3;'>
+			←</button>
+	<button id='ENTER'
+			class='button buttonUnanswered'
+			on:click={(_) => onButtonClick('ENTER')}
+			style='grid-column-start: 8; grid-column-end: 11; grid-row-start: 3; grid-row-end: 4;'>
+			ENTER</button>
+
+</div>
 
 <style>
 
-    #PsedoKeyboard{margin-left:auto; margin-right:auto; display:block; overflow:visible;}
-
-	.letterBoxFull {
-		stroke: #000000;
-		fill: #0bb819;
-		stroke-width: 1px;
+	.container{
+		display: grid;
+		grid-template-columns: repeat(10, 9%);
+		grid-template-rows: repeat(3, 30%);
+		gap: 1%;
+		height: 200px;
+		width: 60%;
+		margin-left:auto;
+		margin-right:auto;
 	}
 
-	.letterBoxPartial {
-		stroke: #000000;
-		fill: #e7e421;
-		stroke-width: 1px;
+	.button {
+    	border: 1px solid #000000;
+		color: #000000;
+		padding: 10% 10%;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 100%;
+		margin: 4px 2px;
+		cursor: pointer;
+  	}
+
+	.buttonFull{
+		background-color: #0bb819;
 	}
 
-	.letterBoxUnanswered {
-		stroke: #000000;
-		fill: #ccc;
-		stroke-width: 1px;
+	.buttonPartial{
+		background-color: #e7e421;;
 	}
 
-	.letterBoxWrong {
-		stroke: #000000;
-		fill: #999;
-		stroke-width: 1px;
+	.buttonWrong{
+		background-color: #999;
+	}
+
+	.buttonUnanswered{
+		background-color: #ccc;;
 	}
 
 </style>

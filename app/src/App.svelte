@@ -1,22 +1,17 @@
 <script>
 	//Imports
 	import PseudoKeyboard from './PseudoKeyboard.svelte'; //Keyboard at bottom of screen
-	import { guessData } from './stores.js'; //Stored variable so other components can see.
 	import * as words from './words.json'; //Contains guessable words and word pool for hexawordle
+	import * as kps from './keyProcesser.js';
+	import { guessData, allLetters, correctWord, currentLetter, currentGuess } from './stores.js';
 
 	//Set up variables
 	let commonWordsArray = words.commonWords.split(',');
 	let randomNum = Math.floor(Math.random() * commonWordsArray.length);
-	let correctWord = commonWordsArray[randomNum].toUpperCase();
+	correctWord.set(commonWordsArray[randomNum].toUpperCase());
 	if(words.testWord != ""){
 		correctWord = words.testWord.toUpperCase();
 	}
-
-	let currentGuess = 0;
-	let currentLetter = 0;
-	let guesses = [];
-	let gameWon = false;
-	let allLetters= 'QWERTYUIOPASDFGHJKLZXCVBNM';
 
 	// Frontend bullshit for grid
 	let boxThickness = 1;
@@ -27,71 +22,12 @@
 		y: boxThickness*14 + boxLength*7 + padding*6 - 8
 	};
 
-	//Stores guessed letters, and if right, partially right, or completely wrong
-	for(let i = 0; i < 7; i++){
-		guesses.push({ id: i, text: ['','','','','',''], vsCorrect:['','','','','',''] })
-	}
-
-	guessData.set(guesses);
+	kps.initGuessData();
 	
 	//Listen for keyboard input on the whole page
 	document.addEventListener('keydown', function(event) {
     	let key = event.key.toUpperCase(); // "a", "1", "Shift", etc.
-		if(!gameWon){
-			if(key === 'ENTER'){
-				if(currentLetter==6){
-					if(checkValidWord()){
-						checkLetters();
-						currentGuess += 1;
-						currentLetter = 0;
-						allLetters += currentGuess;
-					} else {
-						alert('Not a Valid Word!');
-					}
-				} else {
-					alert('Your word is not long enough!');
-				}
-			} else if(currentLetter != 0 && key == 'BACKSPACE') {
-				guesses[currentGuess].text[currentLetter-1] = '';
-				currentLetter -= 1;
-			} else if(key.length == 1 && currentLetter<6 && key.toUpperCase() != key.toLowerCase()){
-				guesses[currentGuess].text[currentLetter] = key;
-				currentLetter += 1;
-			}
-		}
-		
-		function checkValidWord(){
-			let word = guesses[currentGuess].text.join('').toLowerCase();
-			
-			return (words.allWords.includes(word) || words.commonWords.includes(word)); //Ensures word is guessable
-		}
-
-		function checkLetters(){
-			let lettersLeft = correctWord.split('');
-
-			for(let i = 0; i < 6; i++) {
-				if(guesses[currentGuess].text[i] == lettersLeft[i]) {
-					guesses[currentGuess].vsCorrect[i] = 'F';
-					lettersLeft[i] = '';
-				}
-			}
-
-			for(let i = 0; i<6; i++){
-				if (guesses[currentGuess].vsCorrect[i] == '' && correctWord.includes(guesses[currentGuess].text[i]) && lettersLeft.includes(guesses[currentGuess].text[i])){
-					guesses[currentGuess].vsCorrect[i] = 'P';
-					lettersLeft[lettersLeft.indexOf(guesses[currentGuess].text[i])] = '';
-				}
-			}
-
-			for(let i = 0; i<6; i++){
-				if (guesses[currentGuess].vsCorrect[i] != 'F'){
-					gameWon = false;
-					break;
-				}
-				gameWon = true;
-			}
-
-		}
+		kps.processKey(key, $guessData, $correctWord, $currentLetter, $currentGuess, $allLetters);
 	});
 
 	//Convert guess code into box style class
@@ -120,25 +56,25 @@
 		{#each [0, 1, 2, 3, 4, 5, 6] as row}
 			{#each [padding + col*22] as x}
 				{#each [padding + row*22] as y}
-					{#if row >= currentGuess}
+					{#if row >= $currentGuess}
 						<rect width="20" height="20" {x} {y} class='letterBoxUnanswered'/>
 					{:else}
-						<rect width="20" height="20" {x} {y} class={colorOf(guesses[row].vsCorrect[col])}/>
+						<rect width="20" height="20" {x} {y} class={colorOf($guessData[row].vsCorrect[col])}/>
 					{/if}
-					<text x={x+boxLength/2} y={y+boxLength/2+2} dominant-baseline="middle" text-anchor="middle">{guesses[row].text[col]}</text>
+						<text x={x+boxLength/2} y={y+boxLength/2+2} dominant-baseline="middle" text-anchor="middle">{$guessData[row].text[col]}</text>
 				{/each}
 			{/each}
 		{/each}
 	{/each}
 </svg>
 
-<PseudoKeyboard {allLetters}/>
+<PseudoKeyboard allLetters={$allLetters}/>
 
 <main>
-	{#if gameWon == false && currentGuess == 7}
+	{#if kps.gameWon == false && $currentGuess == 7}
 		<p>You unfortunately did not guess the word. It was {correctWord}. Thank you for playing!</p>
-	{:else if gameWon == true}
-		<p>Congradulations! You got it in {currentGuess} guesses!</p>
+	{:else if kps.gameWon == true}
+		<p>Congradulations! You got it in {$currentGuess} guesses!</p>
 	{/if}
 </main>
 
