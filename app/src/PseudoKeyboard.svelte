@@ -101,7 +101,12 @@
 		font-size: 100%;
 		margin: 4px 2px;
 		cursor: pointer;
+		transition-duration: 0.4s;
   	}
+
+	.button:hover {
+		background-color: #FFFFFF;
+	}
 
 	.buttonFull{
 		background-color: #0bb819;

@@ -44,7 +44,7 @@
 <!-- HTML starts below! -->
 
 <header>
-	<h1>Welcome to Hexawordle!</h1>
+	<h1 id=welcome>Welcome to Hexawordle!</h1>
 	<p>Wordle with six letter words!</p>
 	<p>Your guesses lie below.</p>
 </header>
@@ -53,13 +53,13 @@
 
 <svg id='guessBoxes' width='250px' viewBox='0 0 {lettersGrid.x} {lettersGrid.y}'>
 	{#each [0, 1, 2, 3, 4, 5] as col}
-		{#each [0, 1, 2, 3, 4, 5, 6] as row}
+		{#each [0, 1, 2, 3, 4, 5] as row}
 			{#each [padding + col*22] as x}
 				{#each [padding + row*22] as y}
 					{#if row >= $currentGuess}
-						<rect width="20" height="20" {x} {y} class='letterBoxUnanswered'/>
+						<rect width="20" height="20" {x} {y} class='box letterBoxUnanswered'/>
 					{:else}
-						<rect width="20" height="20" {x} {y} class={colorOf($guessData[row].vsCorrect[col])}/>
+						<rect width="20" height="20" {x} {y} class='box {colorOf($guessData[row].vsCorrect[col])}'/>
 					{/if}
 						<text x={x+boxLength/2} y={y+boxLength/2+2} dominant-baseline="middle" text-anchor="middle">{$guessData[row].text[col]}</text>
 				{/each}
@@ -71,10 +71,10 @@
 <PseudoKeyboard allLetters={$allLetters}/>
 
 <main>
-	{#if kps.gameWon == false && $currentGuess == 7}
+	{#if kps.gameWon == false && $currentGuess == 6}
 		<p>You unfortunately did not guess the word. It was {$correctWord}. Thank you for playing!</p>
 	{:else if kps.gameWon == true}
-		<p>Congradulations! You got it in {$currentGuess} guesses!</p>
+		<p>Congratulations! You got it in {$currentGuess} guesses!</p>
 	{/if}
 </main>
 
@@ -106,28 +106,26 @@
 
 	#guessBoxes{margin-left:auto; margin-right:auto; display:block;}
 
-	.letterBoxFull {
+	.box {
 		stroke: #000000;
-		fill: #0bb819;
 		stroke-width: 1px;
+		transition: fill 1s ease;
+	}
+
+	.letterBoxFull {
+		fill: #0bb819;
 	}
 
 	.letterBoxPartial {
-		stroke: #000000;
 		fill: #e7e421;
-		stroke-width: 1px;
 	}
 
 	.letterBoxUnanswered {
-		stroke: #000000;
 		fill: #ccc;
-		stroke-width: 1px;
 	}
 
 	.letterBoxWrong {
-		stroke: #000000;
 		fill: #999;
-		stroke-width: 1px;
 	}
 
 	@media (min-width: 500px) {

@@ -5,7 +5,7 @@ export let guesses = [];
 export let gameWon = false;
 
 export function initGuessData(){
-    for(let i = 0; i < 7; i++){
+    for(let i = 0; i < 6; i++){
         guesses.push({ id: i, text: ['','','','','',''], vsCorrect:['','','','','','']})
     }
     
