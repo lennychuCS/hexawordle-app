@@ -72,7 +72,7 @@
 
 <main>
 	{#if kps.gameWon == false && $currentGuess == 7}
-		<p>You unfortunately did not guess the word. It was {correctWord}. Thank you for playing!</p>
+		<p>You unfortunately did not guess the word. It was {$correctWord}. Thank you for playing!</p>
 	{:else if kps.gameWon == true}
 		<p>Congradulations! You got it in {$currentGuess} guesses!</p>
 	{/if}
