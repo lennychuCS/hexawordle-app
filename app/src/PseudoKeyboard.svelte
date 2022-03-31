@@ -24,7 +24,7 @@
 				if($guessData[z].text[m] == letter){
 					if(stateKey[$guessData[z].vsCorrect[m]]>stateKey[bestState]){
 						bestState=$guessData[z].vsCorrect[m];
-					} else if ($guessData[z].vsCorrect[m] == ''){
+					} else if ($guessData[z].vsCorrect[m] == '' && bestState == 'U'){
 						bestState='W';
 					}
 				}

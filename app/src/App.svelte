@@ -98,10 +98,10 @@
 
 	h1 {
 		color: #f01ba9;
-		text-shadow: 2px 2px 2px #000000;
+		text-shadow: 2px 2px 3px #000000;
 		text-transform: capitalize;
-		font-size: 4em;
-		font-weight: 200;
+		font-size: 3em;
+		font-weight: 400;
 	}
 
 	#guessBoxes{margin-left:auto; margin-right:auto; display:block;}

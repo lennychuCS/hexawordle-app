@@ -33,13 +33,13 @@ export function processKey(key, guessDataReadonly, correctWord, letterNum, guess
         } else if(letterNum != 0 && key == 'BACKSPACE') {
             let tempGuessdata = guessDataReadonly;
             tempGuessdata[guessNum].text[letterNum - 1] = '';
-            guessData.set(tempGuessdata)
+            guessData.set(tempGuessdata);
             currentLetter.update(letter => letter - 1);
             
         } else if(key.length == 1 && letterNum<6 && key.toUpperCase() != key.toLowerCase()){
             let tempGuessdata = guessDataReadonly;
             tempGuessdata[guessNum].text[letterNum] = key;
-            guessData.set(tempGuessdata)
+            guessData.set(tempGuessdata);
             currentLetter.update(letter => letter + 1);
         }
     }
