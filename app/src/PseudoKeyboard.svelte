@@ -82,10 +82,11 @@
 	.container{
 		display: grid;
 		grid-template-columns: repeat(10, 9%);
-		grid-template-rows: repeat(3, 30%);
+		grid-template-rows: repeat(3, 32.33%);
 		gap: 1%;
 		height: 200px;
-		width: 60%;
+		width: 100%;
+		max-width: 900px;
 		margin-left:auto;
 		margin-right:auto;
 	}
