@@ -1,5 +1,5 @@
 <script>
-	import { guessData, correctWord, currentLetter, currentGuess } from './stores.js';
+	import { guessData, correctWord, currentLetter, currentGuess, lastKey } from './stores.js';
 	import * as kps from './keyProcesser.js';
 
 	export let allLetters = 'QWERTYUIOPASDFGHJKLZXCVBNM'; //For Keyboard
@@ -41,23 +41,26 @@
 	}
 </script>
 
-<div id="PseudoKeyboard" class="container">
+<div id="PseudoKeyboard" class="PseudoKeyboard">
 	{#each Array(26) as _, i}
 		{#if i < 10}
 			<button id={allLetters[i]}
 					class='button {colorOf(allLetters[i])}' 
+					type='button'
 					on:click={(_) => onButtonClick(allLetters[i])}
 					style='grid-row-start: 1; grid-row-end: 2;'>
 					{allLetters[i]}</button>
 		{:else if i < 19}
 			<button id={allLetters[i]}
 					class='button {colorOf(allLetters[i])}'
+					type='button'
 					on:click={(_) => onButtonClick(allLetters[i])}
 					style='grid-row-start: 2; grid-row-end: 3;'>
 					{allLetters[i]}</button>
 		{:else}
 			<button id={allLetters[i]}
 					class='button {colorOf(allLetters[i])}'
+					type='button'
 					on:click={(_) => onButtonClick(allLetters[i])}
 					style='grid-row-start: 3; grid-row-end: 4;'>
 					{allLetters[i]}</button>
@@ -66,11 +69,13 @@
 	
 	<button id='BACKSPACE'
 			class='button buttonUnanswered'
+			type='button'
 			on:click={(_) => onButtonClick('BACKSPACE')}
 			style='grid-column-start: 10; grid-column-end: 11; grid-row-start: 2; grid-row-end: 3;'>
 			←</button>
 	<button id='ENTER'
 			class='button buttonUnanswered'
+			type='button'
 			on:click={(_) => onButtonClick('ENTER')}
 			style='grid-column-start: 8; grid-column-end: 11; grid-row-start: 3; grid-row-end: 4;'>
 			ENTER</button>
@@ -78,8 +83,7 @@
 </div>
 
 <style>
-
-	.container{
+	.PseudoKeyboard{
 		display: grid;
 		grid-template-columns: repeat(10, 9%);
 		grid-template-rows: repeat(3, 32.33%);

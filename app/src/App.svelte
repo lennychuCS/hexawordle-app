@@ -3,15 +3,11 @@
 	import PseudoKeyboard from './PseudoKeyboard.svelte'; //Keyboard at bottom of screen
 	import * as words from './words.json'; //Contains guessable words and word pool for hexawordle
 	import * as kps from './keyProcesser.js';
-	import { guessData, allLetters, correctWord, currentLetter, currentGuess } from './stores.js';
+	import { guessData, allLetters, correctWord, currentLetter, currentGuess, lastKey} from './stores.js';
 
 	//Set up variables
-	let commonWordsArray = words.commonWords.split(',');
-	let randomNum = Math.floor(Math.random() * commonWordsArray.length);
-	correctWord.set(commonWordsArray[randomNum].toUpperCase());
-	if(words.testWord != ""){
-		correctWord = words.testWord.toUpperCase();
-	}
+	let hardWordChance = 0.05;
+	chooseRightWord(hardWordChance);
 
 	// Frontend bullshit for grid
 	let boxThickness = 1;
@@ -21,14 +17,28 @@
 		x: boxThickness*12 + boxLength*6 + padding*5 - 8,
 		y: boxThickness*14 + boxLength*7 + padding*6 - 8
 	};
-
-	kps.initGuessData();
 	
 	//Listen for keyboard input on the whole page
 	document.addEventListener('keydown', function(event) {
-    	let key = event.key.toUpperCase(); // "a", "1", "Shift", etc.
-		kps.processKey(key, $guessData, $correctWord, $currentLetter, $currentGuess, $allLetters);
+    	lastKey.set(event.key.toUpperCase()); // "a", "1", "Shift", etc.
+		kps.processKey($lastKey, $guessData, $correctWord, $currentLetter, $currentGuess, $allLetters);
+		event.target.blur();
 	});
+
+	function chooseRightWord(hwc){
+		let possibleWords = words.commonWords.split(',');
+		if(Math.floor(Math.random() * (1/hwc)) == 1){
+			possibleWords = words.hardWords.split(',');
+		}
+		let randomNum = Math.floor(Math.random() * possibleWords.length);
+		correctWord.set(possibleWords[randomNum].toUpperCase());
+		
+		if(words.testWord != ""){
+			correctWord.set(words.testWord.toUpperCase());
+		}
+
+		kps.initGame();
+	}	
 
 	//Convert guess code into box style class
 	function colorOf(cond){
@@ -42,6 +52,30 @@
 </script>
 
 <!-- HTML starts below! -->
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="Hexawordle">
+	<meta name="keywords" content="Wordle, Hexawordle, Lennychu, Game">
+	<meta name="author" content="Eden S.">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  </head>
+
+<div id="navBar" class="navBar">
+	<button id='newWord'
+		class='button'
+		type='button'
+		on:click={(_) => chooseRightWord(hardWordChance)}
+		style='grid-row-start: 1; grid-row-end: 2;'>
+		Get New Word</button>
+
+	<button id='newHardWord'
+		class='button nhwButton'
+		type='button'
+		on:click={(_) => chooseRightWord(0.9)}
+		style='grid-row-start: 2; grid-row-end: 3;'>
+		Get New Word (Hard)</button>
+</div>
 
 <header>
 	<h1 id=welcome>Welcome to Hexawordle!</h1>
@@ -105,6 +139,39 @@
 	}
 
 	#guessBoxes{margin-left:auto; margin-right:auto; display:block;}
+
+	.navBar{
+		display: grid;
+		grid-template-columns: 1;
+		grid-template-rows: repeat(2, 100px);
+		gap: 10px;
+		height: 210px;
+		width: 100px;
+		float: right;
+		position: absolute;
+		top: 20%;
+		right: 0px;
+		background-color: rgba(200,200,200,0.7);
+		padding: 20px;
+	}
+
+	.button {
+    	border: 1px solid #000000;
+		color: #000000;
+		padding: 2px 2px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 1px 1px;
+		cursor: pointer;
+		transition-duration: 0.4s;
+		background-color: #ccc;
+  	}
+
+	.nhwButton {
+		background-color: #AA0000;
+	}
 
 	.box {
 		stroke: #000000;

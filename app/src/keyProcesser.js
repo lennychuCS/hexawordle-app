@@ -1,15 +1,21 @@
-import {guessData, allLetters, currentGuess, currentLetter} from './stores.js'; //Stored variable so other components can see.
+import {guessData, allLetters, currentGuess, currentLetter, lastKey} from './stores.js'; //Stored variable so other components can see.
 import * as words from './words.json'; //Contains guessable words and word pool for hexawordle
 
 export let guesses = [];
 export let gameWon = false;
 
-export function initGuessData(){
+export function initGame(){
+    guesses = [];
+    gameWon = false;
+
     for(let i = 0; i < 6; i++){
         guesses.push({ id: i, text: ['','','','','',''], vsCorrect:['','','','','','']})
     }
     
     guessData.set(guesses);
+    allLetters.set('QWERTYUIOPASDFGHJKLZXCVBNM');
+    currentGuess.set(0);
+    currentLetter.set(0);
 }
 
 export function processKey(key, guessDataReadonly, correctWord, letterNum, guessNum, lettersList){
@@ -48,7 +54,7 @@ export function processKey(key, guessDataReadonly, correctWord, letterNum, guess
 export function checkValidWord(guessDataReadonly, currentGuess){
     let word = guessDataReadonly[currentGuess].text.join('').toLowerCase();
     
-    return (words.allWords.includes(word) || words.commonWords.includes(word)); //Ensures word is guessable
+    return (words.allWords.includes(word) || words.commonWords.includes(word) || words.hardWords.includes(word)); //Ensures word is guessable
 }
 
 export function checkLetters(guessDataReadonly, correctWord, currentGuess){
