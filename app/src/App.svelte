@@ -27,7 +27,7 @@
 
 	function chooseRightWord(hwc){
 		let possibleWords = words.commonWords.split(',');
-		if(Math.floor(Math.random() * (1/hwc)) == 1){
+		if(Math.floor(Math.random() * (100/hwc)) < 100){
 			possibleWords = words.hardWords.split(',');
 		}
 		let randomNum = Math.floor(Math.random() * possibleWords.length);
