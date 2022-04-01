@@ -67,14 +67,14 @@
 		type='button'
 		on:click={(_) => chooseRightWord(hardWordChance)}
 		style='grid-row-start: 1; grid-row-end: 2;'>
-		Get New Word</button>
+		<span>Get New Word</span></button>
 
 	<button id='newHardWord'
 		class='button nhwButton'
 		type='button'
 		on:click={(_) => chooseRightWord(0.9)}
 		style='grid-row-start: 2; grid-row-end: 3;'>
-		Get New Word (Hard)</button>
+		<span>Get New Word (Hard)</span></button>
 </div>
 
 <header>
@@ -146,7 +146,8 @@
 		grid-template-rows: repeat(2, 100px);
 		gap: 10px;
 		height: 210px;
-		width: 100px;
+		width: 10%;
+		max-width: 100px;
 		float: right;
 		position: absolute;
 		top: 20%;
@@ -167,6 +168,7 @@
 		cursor: pointer;
 		transition-duration: 0.4s;
 		background-color: #ccc;
+		writing-mode:sideways-rl;
   	}
 
 	.nhwButton {

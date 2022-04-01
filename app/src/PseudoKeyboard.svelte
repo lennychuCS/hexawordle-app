@@ -89,7 +89,7 @@
 		grid-template-rows: repeat(3, 32.33%);
 		gap: 1%;
 		height: 200px;
-		width: 100%;
+		width: 90%;
 		max-width: 900px;
 		margin-left:auto;
 		margin-right:auto;
