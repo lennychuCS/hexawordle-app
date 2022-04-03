@@ -4,6 +4,7 @@
 	import * as words from './words.json'; //Contains guessable words and word pool for hexawordle
 	import * as kps from './keyProcesser.js';
 	import { guessData, allLetters, correctWord, currentLetter, currentGuess, lastKey} from './stores.js';
+	import countapi from 'countapi-js';
 
 	//Set up variables
 	let hardWordChance = 0.05;
@@ -17,6 +18,11 @@
 		x: boxThickness*12 + boxLength*6 + padding*5 - 8,
 		y: boxThickness*14 + boxLength*7 + padding*6 - 8
 	};
+
+	let pageVisits
+	countapi.visits('hexawordle').then((result) => {
+		pageVisits = result.value;
+	});
 	
 	//Listen for keyboard input on the whole page
 	document.addEventListener('keydown', function(event) {
@@ -109,6 +115,10 @@
 		<p>You unfortunately did not guess the word. It was {$correctWord}. Thank you for playing!</p>
 	{:else if kps.gameWon == true}
 		<p>Congratulations! You got it in {$currentGuess} guesses!</p>
+	{/if}
+
+	{#if pageVisits != undefined}
+		<p>This page has been visited <b>{pageVisits}</b> times!</p>
 	{/if}
 </main>
 
