@@ -21,21 +21,21 @@ export function initGame(){
 export function processKey(key, guessDataReadonly, correctWord, letterNum, guessNum, lettersList){
     if(!gameWon){
         if(key === 'ENTER'){
-            if(letterNum==6){
-                if(checkValidWord(guessDataReadonly, guessNum)){
-                    checkLetters(guessDataReadonly, correctWord, guessNum);
-                    currentGuess.update(guess => {
-                        allLetters.update(() => lettersList + guessNum);
-                        
-                        return guess + 1
-                    })
-                    currentLetter.set(0);
-                } else {
-                    alert('Not a Valid Word!');
-                }
-            } else {
+            
+            if(letterNum!=6){
                 alert('Your word is not long enough!');
             }
+
+            if(!checkValidWord(guessDataReadonly, guessNum)){
+                alert('Not a Valid Word!');
+            }
+
+            checkLetters(guessDataReadonly, correctWord, guessNum);
+            currentGuess.update(guess => {
+                allLetters.update(() => lettersList + guessNum);
+                return guess + 1
+            })
+
         } else if(letterNum != 0 && key == 'BACKSPACE') {
             let tempGuessdata = guessDataReadonly;
             tempGuessdata[guessNum].text[letterNum - 1] = '';

@@ -63,17 +63,17 @@
 
 <div id="navBar" class="navBar">
 	<button id='newWord'
-		class='button'
+		class='button nwButton'
 		type='button'
 		on:click={(_) => chooseRightWord(hardWordChance)}
-		style='grid-row-start: 1; grid-row-end: 2;'>
+		style='grid-col-start: 1; grid-col-end: 2;'>
 		<span>Get New Word</span></button>
 
 	<button id='newHardWord'
 		class='button nhwButton'
 		type='button'
 		on:click={(_) => chooseRightWord(0.9)}
-		style='grid-row-start: 2; grid-row-end: 3;'>
+		style='grid-col-start: 2; grid-col-end: 3;'>
 		<span>Get New Word (Hard)</span></button>
 </div>
 
@@ -119,7 +119,7 @@
 		text-align: center;
 		padding: 2px;
 		margin: 0;
-		line-height: 0.8;
+		line-height: 0.7;
 	}
 	
 	main {
@@ -141,19 +141,23 @@
 	#guessBoxes{margin-left:auto; margin-right:auto; display:block;}
 
 	.navBar{
+		margin-left:auto;
+		margin-right:auto;
 		display: grid;
-		grid-template-columns: 1;
-		grid-template-rows: repeat(2, 100px);
-		gap: 10px;
-		height: 210px;
-		width: 10%;
-		max-width: 100px;
-		float: right;
-		position: absolute;
-		top: 20%;
-		right: 0px;
+		grid-template-columns:repeat(5, 18%);
+		grid-template-rows: 1;
+		gap: 1%;
+		height: 15%;
+		max-height: 75px;
+		width: 90%;
+		position: static;
+		top: 0px;
 		background-color: rgba(200,200,200,0.7);
-		padding: 20px;
+		padding-top: 4px;
+		padding-bottom: 4px;
+		padding-left: 1%;
+		padding-right: 1%;
+		border-radius: 10px;
 	}
 
 	.button {
@@ -163,16 +167,20 @@
 		text-align: center;
 		text-decoration: none;
 		display: inline-block;
-		font-size: 16px;
+		font-size: 14px;
 		margin: 1px 1px;
-		cursor: pointer;
+		cursor: grab;
 		transition-duration: 0.4s;
-		background-color: #ccc;
-		writing-mode:sideways-rl;
+		background-color: #bbb;
+		border-radius: 10px;
   	}
 
 	.nhwButton {
 		background-color: #AA0000;
+	}
+
+	.nwButton {
+		background-color: #eee;
 	}
 
 	.box {
