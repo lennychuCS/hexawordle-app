@@ -35,6 +35,7 @@ export function processKey(key, guessDataReadonly, correctWord, letterNum, guess
                 allLetters.update(() => lettersList + guessNum);
                 return guess + 1
             })
+            currentLetter.set(0);
 
         } else if(letterNum != 0 && key == 'BACKSPACE') {
             let tempGuessdata = guessDataReadonly;
