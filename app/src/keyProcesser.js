@@ -24,10 +24,12 @@ export function processKey(key, guessDataReadonly, correctWord, letterNum, guess
             
             if(letterNum!=6){
                 alert('Your word is not long enough!');
+                return;
             }
 
             if(!checkValidWord(guessDataReadonly, guessNum)){
                 alert('Not a Valid Word!');
+                return;
             }
 
             checkLetters(guessDataReadonly, correctWord, guessNum);
